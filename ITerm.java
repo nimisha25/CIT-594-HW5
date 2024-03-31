@@ -14,7 +14,13 @@ public interface ITerm
      */
     public static Comparator<ITerm> byReverseWeightOrder()
     {
-        return null;
+        return new Comparator<ITerm>() {
+            @Override
+            public int compare(ITerm t1, ITerm t2) {
+                // Assuming weight is positive. Reverse order so subtract t2 from t1
+                return Long.compare(t2.getWeight(), t1.getWeight());
+            }
+        };
     }
 
 
@@ -22,12 +28,22 @@ public interface ITerm
      * Compares the two terms in lexicographic order but using only the first r
      * characters of each query.
      *
-     * @param r
+     * @param
      * @return comparator Object
      */
     public static Comparator<ITerm> byPrefixOrder(int r)
     {
-        return null;
+        if(r < 0) {
+            throw new IllegalArgumentException();
+        }
+        return new Comparator<ITerm>() {
+            @Override
+            public int compare(ITerm t1, ITerm t2) {
+                String prefix1 = t1.getTerm().length() > r ? t1.getTerm().substring(0, r) : t1.getTerm();
+                String prefix2 = t2.getTerm().length() > r ? t2.getTerm().substring(0, r) : t2.getTerm();
+                return prefix1.compareTo(prefix2);
+            }
+        };
     }
 
     // Compares the two terms in lexicographic order by query.
